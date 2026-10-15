@@ -147,3 +147,47 @@ A plot close to the diagonal is encouraging, but it does not by itself prove gen
 1. NASA, *Li-ion Battery Aging Datasets*, NASA Dashlink: https://c3.ndc.nasa.gov/dashlink/resources/133/
 2. scikit-learn documentation: https://scikit-learn.org/stable/
 3. SciPy MATLAB file I/O documentation: https://docs.scipy.org/doc/scipy/reference/io.html
+
+
+## Model Performance and Evaluation
+
+The ThermoAI temperature prediction model was evaluated on held-out test data using regression metrics and inference latency measurements.
+
+### Prediction Performance
+
+| Metric | Result |
+|---|---:|
+| Mean Absolute Error (MAE) | 0.1696 °C |
+| Root Mean Squared Error (RMSE) | 0.3462 °C |
+| R² Score | 0.9995 |
+| Predictions within ±1 °C | 97.86% |
+| Predictions within ±2 °C | 99.49% |
+
+### Inference Latency
+
+| Metric | Result |
+|---|---:|
+| Median latency | 101.7951 ms |
+| Mean latency | 101.8069 ms |
+| 95th-percentile latency | 114.3251 ms |
+| Maximum observed latency | 319.4423 ms |
+
+Latency was measured in the Google Colab environment using repeated single-sample prediction calls. These values represent model inference time in that environment and may differ on other hardware.
+
+### Interpretation
+
+- **Low MAE:** The model's average absolute prediction error was approximately 0.17 °C on the evaluated test data.
+- **Low RMSE:** The model showed relatively small prediction errors, including a penalty for larger errors.
+- **High R²:** The model explained a very high proportion of the variation in the test-set temperature targets.
+- **Fast inference:** The median measured inference time was approximately 102 ms per prediction call.
+
+### Important Limitations
+
+These are preliminary results obtained using a public NASA battery dataset. They do not establish equivalent performance on the project's own 18650 battery pack or cooling system.
+
+Before treating these metrics as final, validate the model against a persistence baseline (predicting that the future temperature equals the current temperature) and verify that training and testing are separated by battery and that no future information leaks into the input features.
+
+The R² score is a regression metric and should not be interpreted as classification accuracy.
+
+The cooling recommendation is currently rule-based. The model predicts battery temperature; it does not directly predict the optimal coolant temperature or pump speed.
+
